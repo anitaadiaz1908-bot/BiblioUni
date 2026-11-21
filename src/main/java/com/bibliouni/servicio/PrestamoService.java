@@ -72,9 +72,10 @@ public class PrestamoService {
             throw new ReglaNegocioException("Este préstamo ya fue devuelto");
         }
 
+        LocalDate hoy = LocalDate.now();
         prestamo.setActivo(false);
-        prestamo.setFechaDevolucion(LocalDate.now());
-        prestamo.setMulta(calcularMulta(prestamo, LocalDate.now()));
+        prestamo.setFechaDevolucion(hoy);
+        prestamo.setMulta(calcularMulta(prestamo, hoy));
 
         // Gancho innovador: se aparta para el siguiente de la fila (o queda disponible)
         reservaService.asignarAlSiguiente(prestamo.getMaterial());
