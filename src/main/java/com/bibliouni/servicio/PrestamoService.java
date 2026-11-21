@@ -74,6 +74,7 @@ public class PrestamoService {
 
         prestamo.setActivo(false);
         prestamo.setFechaDevolucion(LocalDate.now());
+        prestamo.setMulta(calcularMulta(prestamo, LocalDate.now()));
 
         // Gancho innovador: se aparta para el siguiente de la fila (o queda disponible)
         reservaService.asignarAlSiguiente(prestamo.getMaterial());
