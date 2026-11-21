@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +78,14 @@ public class PrestamoService {
         reservaService.asignarAlSiguiente(prestamo.getMaterial());
 
         return prestamoRepository.save(prestamo);
+    }
+
+    public long calcularMulta(Prestamo prestamo, LocalDate fechaDevolucion) {
+        long dias = ChronoUnit.DAYS.between(prestamo.getFechaLimite(), fechaDevolucion);
+        if (dias > 0) {
+            return dias * 1000;
+        }
+        return 0;
     }
 
     public List<Prestamo> prestamosActivosDe(Long usuarioId) {
