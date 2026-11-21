@@ -16,6 +16,7 @@ public class PrestamoService {
 
     public static final int MAX_PRESTAMOS_ACTIVOS = 3;
     public static final int DIAS_PRESTAMO = 8;
+    public static final long MULTA_POR_DIA = 1000;
 
     private final PrestamoRepository prestamoRepository;
     private final MaterialRepository materialRepository;
@@ -80,12 +81,14 @@ public class PrestamoService {
         return prestamoRepository.save(prestamo);
     }
 
+    /** Multa de $1.000 por cada día de retraso. Si se devuelve a tiempo la multa es 0. */
     public long calcularMulta(Prestamo prestamo, LocalDate fechaDevolucion) {
+        return diasDeRetraso(prestamo, fechaDevolucion) * MULTA_POR_DIA;
+    }
+
+    private long diasDeRetraso(Prestamo prestamo, LocalDate fechaDevolucion) {
         long dias = ChronoUnit.DAYS.between(prestamo.getFechaLimite(), fechaDevolucion);
-        if (dias > 0) {
-            return dias * 1000;
-        }
-        return 0;
+        return Math.max(dias, 0);
     }
 
     public List<Prestamo> prestamosActivosDe(Long usuarioId) {
