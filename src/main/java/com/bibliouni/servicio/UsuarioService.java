@@ -32,6 +32,9 @@ public class UsuarioService {
         if (!esCorreoValido(usuario.getCorreo())) {
             throw new ReglaNegocioException("El correo no es válido");
         }
+        if (usuarioRepository.existsByCorreoIgnoreCase(usuario.getCorreo())) {
+            throw new ReglaNegocioException("Ya existe un usuario con ese correo");
+        }
         return usuarioRepository.save(usuario);
     }
 
