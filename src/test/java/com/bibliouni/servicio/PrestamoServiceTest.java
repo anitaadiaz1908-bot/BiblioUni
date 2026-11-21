@@ -189,4 +189,23 @@ class PrestamoServiceTest {
         // Assert
         assertEquals(multaEsperada, multa);
     }
+
+    // CP-017
+    @Test
+    void devolverCuandoHayRetrasoEntoncesGuardaLaMultaEnElPrestamo() {
+        // Arrange
+        Prestamo prestamo = new Prestamo(laura, libro, LocalDate.now().minusDays(11), LocalDate.now().minusDays(3));
+        prestamo.setId(10L);
+        when(prestamoRepository.findById(10L)).thenReturn(Optional.of(prestamo));
+        when(prestamoRepository.save(any(Prestamo.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        Prestamo devuelto = prestamoService.devolver(10L);
+
+        // Assert
+        assertFalse(devuelto.isActivo());
+        assertEquals(LocalDate.now(), devuelto.getFechaDevolucion());
+        assertEquals(3000, devuelto.getMulta());
+        verify(reservaService).asignarAlSiguiente(libro);
+    }
 }
