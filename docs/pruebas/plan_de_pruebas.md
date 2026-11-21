@@ -6,7 +6,7 @@
 |-------|-------|
 | **Identificador** | PP-BIBLIOUNI-001 |
 | **Nombre** | Plan de pruebas del sistema de préstamos BiblioUni |
-| **Versión** | 1.0 |
+| **Versión** | 1.1 |
 | **Fecha** | noviembre de 2026 |
 | **Responsable** | Ana María Díaz Parra |
 | **Asignatura** | Pruebas de software – Unidad 2 |
@@ -127,7 +127,8 @@ El foco de esta unidad está en la **capa de servicios** (`MaterialService`, `Pr
 - `src/test/java/com/bibliouni/servicio/MaterialServiceTest.java`
 - `src/test/java/com/bibliouni/servicio/PrestamoServiceTest.java`
 - `src/test/java/com/bibliouni/servicio/UsuarioServiceTest.java`
-- `docs/pruebas/evidencias/` con la salida de `mvn test` de las fases *red* de TDD.
+- Historial de commits de la rama `feature/plan-tests` con las fases *red*, *green* y *refactor* de TDD.
+- Workflow de integración continua `.github/workflows/ci.yml` que ejecuta `mvn test` en cada push y Pull Request.
 - Reporte de resultados de Surefire (`target/surefire-reports/`) y de cobertura JaCoCo (`target/site/jacoco/index.html`).
 - Captura de `mvn test` en verde y Pull Request hacia `develop`.
 
@@ -147,7 +148,7 @@ El foco de esta unidad está en la **capa de servicios** (`MaterialService`, `Pr
 | Postman | Pruebas manuales de la API (U3). |
 | H2 (en memoria) | Base de datos del entorno de pruebas. |
 | IntelliJ IDEA | Editor y ejecución de pruebas. |
-| GitHub | Repositorio, ramas y Pull Request. |
+| GitHub y GitHub Actions | Repositorio, ramas, Pull Request e integración continua (`mvn test` automático). |
 
 ### 9.2 Recursos humanos
 
@@ -211,5 +212,6 @@ Probabilidad (P) e impacto (I) de 1 (bajo) a 3 (alto). Prioridad = P × I. Está
 | Versión | Fecha | Cambio | Autor |
 |---------|-------|--------|-------|
 | 1.0 | noviembre de 2026 | Versión inicial del plan para la Unidad 2. | Ana María Díaz Parra |
+| 1.1 | noviembre de 2026 | Se agrega a los entregables el historial TDD y el workflow de CI (GitHub Actions); se agrega GitHub Actions a los recursos. La regla de correo repetido (CP-021) entra al alcance de F-07. | Ana María Díaz Parra |
 
 Cualquier cambio en el alcance, los criterios o los riesgos se registra en esta tabla con una nueva versión y se sube a la rama de pruebas.
