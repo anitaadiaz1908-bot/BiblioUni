@@ -5,9 +5,13 @@ import com.bibliouni.repositorio.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class UsuarioService {
+
+    // texto + @ + dominio con al menos un punto (ej. laura@uniempresarial.edu.co)
+    private static final Pattern FORMATO_CORREO = Pattern.compile("^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$");
 
     private final UsuarioRepository usuarioRepository;
 
@@ -25,9 +29,13 @@ public class UsuarioService {
     }
 
     public Usuario registrar(Usuario usuario) {
-        if (usuario.getCorreo() == null || !usuario.getCorreo().matches("^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$")) {
+        if (!esCorreoValido(usuario.getCorreo())) {
             throw new ReglaNegocioException("El correo no es válido");
         }
         return usuarioRepository.save(usuario);
+    }
+
+    private boolean esCorreoValido(String correo) {
+        return correo != null && FORMATO_CORREO.matcher(correo).matches();
     }
 }
