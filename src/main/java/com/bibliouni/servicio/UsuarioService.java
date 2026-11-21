@@ -25,6 +25,9 @@ public class UsuarioService {
     }
 
     public Usuario registrar(Usuario usuario) {
+        if (usuario.getCorreo() == null || !usuario.getCorreo().matches("^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$")) {
+            throw new ReglaNegocioException("El correo no es válido");
+        }
         return usuarioRepository.save(usuario);
     }
 }
