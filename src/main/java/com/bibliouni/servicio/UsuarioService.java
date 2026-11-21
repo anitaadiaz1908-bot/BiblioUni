@@ -29,13 +29,18 @@ public class UsuarioService {
     }
 
     public Usuario registrar(Usuario usuario) {
-        if (!esCorreoValido(usuario.getCorreo())) {
+        validarCorreo(usuario.getCorreo());
+        return usuarioRepository.save(usuario);
+    }
+
+    /** Revisa que el correo tenga buen formato y que no lo tenga otro usuario. */
+    private void validarCorreo(String correo) {
+        if (!esCorreoValido(correo)) {
             throw new ReglaNegocioException("El correo no es válido");
         }
-        if (usuarioRepository.existsByCorreoIgnoreCase(usuario.getCorreo())) {
+        if (usuarioRepository.existsByCorreoIgnoreCase(correo)) {
             throw new ReglaNegocioException("Ya existe un usuario con ese correo");
         }
-        return usuarioRepository.save(usuario);
     }
 
     private boolean esCorreoValido(String correo) {
