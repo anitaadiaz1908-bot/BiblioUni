@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -166,5 +167,26 @@ class PrestamoServiceTest {
         assertEquals("Este préstamo ya fue devuelto", error.getMessage());
         verify(reservaService, never()).asignarAlSiguiente(any(Material.class));
         verify(prestamoRepository, never()).save(any(Prestamo.class));
+    }
+
+    // ---------- Multa por devolución tardía (TDD) ----------
+
+    // CP-013, CP-014, CP-015 (valores límite) y CP-016 (partición: con retraso)
+    @ParameterizedTest(name = "devuelto el {0} con límite 2026-11-10 -> multa de {1}")
+    @CsvSource({
+            "2026-11-09, 0",      // 1 día antes del límite
+            "2026-11-10, 0",      // el mismo día límite
+            "2026-11-11, 1000",   // 1 día después
+            "2026-11-20, 10000"   // 10 días de retraso
+    })
+    void calcularMultaSegunLaFechaDeDevolucion(LocalDate fechaDevolucion, long multaEsperada) {
+        // Arrange
+        Prestamo prestamo = new Prestamo(laura, libro, LocalDate.of(2026, 11, 2), LocalDate.of(2026, 11, 10));
+
+        // Act
+        long multa = prestamoService.calcularMulta(prestamo, fechaDevolucion);
+
+        // Assert
+        assertEquals(multaEsperada, multa);
     }
 }
