@@ -58,4 +58,20 @@ class UsuarioServiceTest {
         assertEquals("El correo no es válido", error.getMessage());
         verify(usuarioRepository, never()).save(any(Usuario.class));
     }
+
+    // CP-021 (camino triste)
+    @Test
+    void registrarCuandoCorreoYaExisteEntoncesLanzaReglaNegocio() {
+        // Arrange
+        Usuario repetido = new Usuario("Laura G.", "Laura@Uniempresarial.edu.co", "ESTUDIANTE");
+        when(usuarioRepository.existsByCorreoIgnoreCase("Laura@Uniempresarial.edu.co")).thenReturn(true);
+
+        // Act
+        ReglaNegocioException error = assertThrows(ReglaNegocioException.class,
+                () -> usuarioService.registrar(repetido));
+
+        // Assert
+        assertEquals("Ya existe un usuario con ese correo", error.getMessage());
+        verify(usuarioRepository, never()).save(any(Usuario.class));
+    }
 }
