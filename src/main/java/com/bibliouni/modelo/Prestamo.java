@@ -20,6 +20,7 @@ public class Prestamo {
     private LocalDate fechaLimite;
     private LocalDate fechaDevolucion;
     private boolean activo = true;
+    private long multa; // en pesos, se calcula al devolver
 
     public Prestamo() {
     }
@@ -45,4 +46,6 @@ public class Prestamo {
     public void setFechaDevolucion(LocalDate fechaDevolucion) { this.fechaDevolucion = fechaDevolucion; }
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
+    public long getMulta() { return multa; }
+    public void setMulta(long multa) { this.multa = multa; }
 }

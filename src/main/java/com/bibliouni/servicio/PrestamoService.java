@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ public class PrestamoService {
 
     public static final int MAX_PRESTAMOS_ACTIVOS = 3;
     public static final int DIAS_PRESTAMO = 8;
+    public static final long MULTA_POR_DIA = 1000;
 
     private final PrestamoRepository prestamoRepository;
     private final MaterialRepository materialRepository;
@@ -70,13 +72,25 @@ public class PrestamoService {
             throw new ReglaNegocioException("Este préstamo ya fue devuelto");
         }
 
+        LocalDate hoy = LocalDate.now();
         prestamo.setActivo(false);
-        prestamo.setFechaDevolucion(LocalDate.now());
+        prestamo.setFechaDevolucion(hoy);
+        prestamo.setMulta(calcularMulta(prestamo, hoy));
 
         // Gancho innovador: se aparta para el siguiente de la fila (o queda disponible)
         reservaService.asignarAlSiguiente(prestamo.getMaterial());
 
         return prestamoRepository.save(prestamo);
+    }
+
+    /** Multa de $1.000 por cada día de retraso. Si se devuelve a tiempo la multa es 0. */
+    public long calcularMulta(Prestamo prestamo, LocalDate fechaDevolucion) {
+        return diasDeRetraso(prestamo, fechaDevolucion) * MULTA_POR_DIA;
+    }
+
+    private long diasDeRetraso(Prestamo prestamo, LocalDate fechaDevolucion) {
+        long dias = ChronoUnit.DAYS.between(prestamo.getFechaLimite(), fechaDevolucion);
+        return Math.max(dias, 0);
     }
 
     public List<Prestamo> prestamosActivosDe(Long usuarioId) {

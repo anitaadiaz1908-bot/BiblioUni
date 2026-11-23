@@ -1,12 +1,15 @@
 # BiblioUni
 
+[![CI - mvn test](https://github.com/anitaadiaz1908-bot/BiblioUni/actions/workflows/ci.yml/badge.svg)](https://github.com/anitaadiaz1908-bot/BiblioUni/actions/workflows/ci.yml)
+
 Sistema de préstamos para la biblioteca de la universidad, hecho con **Spring Boot**. Funciona por medio de una API REST.
 
 ## Funcionalidades
 
 - Registrar y buscar materiales (libros, revistas, tesis).
-- Registrar usuarios (estudiantes y docentes).
+- Registrar usuarios (estudiantes y docentes) con correo válido y sin repetir.
 - Prestar y devolver materiales (máximo 3 préstamos activos por usuario, 8 días de préstamo).
+- Multa de $1.000 por cada día de retraso al devolver.
 - **Gancho innovador – Lista de espera inteligente:** si un material está prestado, el estudiante se anota en una fila. Cuando lo devuelven, queda apartado 48 horas para el primero de la fila. Si no lo recoge, pasa al siguiente.
 
 ## Requisitos
@@ -57,8 +60,21 @@ docs/pruebas/
 ├── estrategia.md          → estrategia de pruebas
 ├── calidad_iso25010.md    → evaluación de calidad ISO/IEC 25010
 ├── escenarios.md          → escenarios de prueba narrativos
+├── plan_de_pruebas.md     → plan de pruebas (IEEE 829) – Unidad 2
+├── casos_de_prueba.md     → 22 casos de prueba formales – Unidad 2
 └── mapa_conceptual.png    → mapa conceptual de pruebas de software
 ```
+
+## Pruebas unitarias (Unidad 2)
+
+| Clase de prueba | Qué prueba | Pruebas |
+|-----------------|-----------|:-------:|
+| `MaterialServiceTest` | Registrar, buscar por id (existe / no existe), buscar por título, eliminar prestado | 5 |
+| `PrestamoServiceTest` | Prestar (feliz, material no disponible, límite de 3, usuario inexistente), devolver, multa por retraso | 14 |
+| `UsuarioServiceTest` | Correo válido, correos inválidos y correo repetido | 7 |
+| `MaterialControllerTest` | El endpoint `/api/materiales` responde | 1 |
+
+Se usan JUnit 5 y Mockito (`@Mock`, `@InjectMocks`), patrón AAA y nombres en español. La multa y la validación del correo se hicieron con TDD (ver commits `test(red)`, `feat(green)` y `refactor` en la rama `feature/plan-tests`).
 
 ### Estrategia de organización del repositorio de pruebas
 
